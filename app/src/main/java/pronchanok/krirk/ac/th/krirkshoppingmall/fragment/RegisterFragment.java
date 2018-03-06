@@ -11,15 +11,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 
 import pronchanok.krirk.ac.th.krirkshoppingmall.MainActivity;
 import pronchanok.krirk.ac.th.krirkshoppingmall.R;
+import pronchanok.krirk.ac.th.krirkshoppingmall.utility.MyAlert;
 
 /**
  * Created by HP on 6/3/2561.
  */
 
 public class RegisterFragment extends Fragment {
+
+    // Explicit
+    private String nameString, userString, passwordString, modeString;
+    private boolean aBoolean = true;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -28,7 +34,30 @@ public class RegisterFragment extends Fragment {
 //        Create Toolbar
         createToolbar();
 
+//       Radio Controllrt
+        radioController();
+
     }   // Main Method
+
+    private void radioController() {
+        RadioGroup radioGroup = getView().findViewById(R.id.ragMode);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+
+                aBoolean = false;
+                switch (i) {
+                    case R.id.radOwnerShop:
+                        modeString = "OwnerShop";
+                    break;
+                    case R.id.radCustomer:
+                        modeString = "Customer";
+                    break;
+                }
+
+            }
+        });
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -42,8 +71,28 @@ public class RegisterFragment extends Fragment {
     private void uplodeToServer() {
 
 //        Get Value From Editext
+        EditText nameEditText = getView().findViewById(R.id.edtName);
+        EditText userEditText = getView().findViewById(R.id.edtUser);
+        EditText passwordEditText = getView().findViewById(R.id.edtPassword);
 
+        nameString = nameEditText.getText().toString().trim();
+        userString = userEditText.getText().toString().trim();
+        passwordString = passwordEditText.getText().toString().trim();
 
+//        Check Space
+        if (nameString.isEmpty() || userString.isEmpty() || passwordString.isEmpty()) {
+//        Have Space
+            MyAlert myAlert = new MyAlert(getActivity());
+            myAlert.myDialog(getString(R.string.title_have_space), getString(R.string.message_have_space));
+
+        } else if (aBoolean) {
+//            Non Choose Mode
+            MyAlert myAlert = new MyAlert(getActivity());
+            myAlert.myDialog("Non Choose Mode", "Please Choose Mode");
+        } else {
+//            Choose Mode OK
+
+        }
 
 
     }   // uplodeToServer
@@ -59,7 +108,7 @@ public class RegisterFragment extends Fragment {
         setHasOptionsMenu(true);
 
         Toolbar toolbar = getView().findViewById(R.id.toolbarRegister);
-        ((MainActivity)getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.register));
         ((MainActivity) getActivity()).getSupportActionBar().setSubtitle(getString(R.string.message_have_space));
